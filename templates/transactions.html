@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Entradas e Saídas | Controle de Caixa{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Lançar entrada ou saída</h2>
+  <form method="post" class="form-grid form-4">
+    <label>Tipo
+      <select name="type" required>
+        <option value="entrada">Entrada</option>
+        <option value="saida">Saída</option>
+      </select>
+    </label>
+    <label>Valor (R$)
+      <input type="number" name="amount" min="0.01" step="0.01" required>
+    </label>
+    <label>Data
+      <input type="date" name="date" value="{{ today }}" required>
+    </label>
+    <label>Motivo (obrigatório em saída)
+      <input type="text" name="reason" placeholder="Ex: Aluguel, Compra, Taxa">
+    </label>
+    <label class="full">Descrição
+      <input type="text" name="description" placeholder="Detalhes opcionais">
+    </label>
+    <button type="submit">Salvar movimentação</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Histórico completo</h2>
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Data</th><th>Tipo</th><th>Motivo</th><th>Descrição</th><th>Valor</th></tr>
+    </thead>
+    <tbody>
+      {% for row in records %}
+      <tr>
+        <td>{{ row.date }}</td>
+        <td>{{ row.type }}</td>
+        <td>{{ row.reason or '-' }}</td>
+        <td>{{ row.description or '-' }}</td>
+        <td class="{{ 'positive' if row.type == 'entrada' else 'negative' }}">R$ {{ '%.2f'|format(row.amount) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>Nenhum lançamento ainda.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | Controle de Caixa{% endblock %}
+
+{% block content %}
+<section class="header-row">
+  <h2>Resumo financeiro</h2>
+  <form method="get" class="inline-form">
+    <label>Mês de referência
+      <input type="month" name="month" value="{{ selected_month }}">
+    </label>
+    <button type="submit">Filtrar</button>
+  </form>
+</section>
+
+<section class="cards-grid">
+  <article class="card metric">
+    <h3>Total disponível</h3>
+    <p class="value {{ 'positive' if balance >= 0 else 'negative' }}">R$ {{ '%.2f'|format(balance) }}</p>
+  </article>
+  <article class="card metric">
+    <h3>Entradas no mês</h3>
+    <p class="value positive">R$ {{ '%.2f'|format(income) }}</p>
+  </article>
+  <article class="card metric">
+    <h3>Despesas no mês</h3>
+    <p class="value negative">R$ {{ '%.2f'|format(expense) }}</p>
+  </article>
+  <article class="card metric">
+    <h3>Lucro no mês</h3>
+    <p class="value {{ 'positive' if profit >= 0 else 'negative' }}">R$ {{ '%.2f'|format(profit) }}</p>
+  </article>
+</section>
+
+<section class="two-col">
+  <article class="card">
+    <h3>Onde mais gastou (por motivo)</h3>
+    {% if top_expenses %}
+      <table>
+        <thead>
+          <tr><th>Motivo</th><th>Total gasto</th></tr>
+        </thead>
+        <tbody>
+          {% for item in top_expenses %}
+          <tr>
+            <td>{{ item.reason }}</td>
+            <td>R$ {{ '%.2f'|format(item.total) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Não há saídas com motivo no mês selecionado.</p>
+    {% endif %}
+  </article>
+
+  <article class="card">
+    <h3>Próximas contas a pagar</h3>
+    {% if pending_accounts %}
+      <table>
+        <thead>
+          <tr><th>Título</th><th>Vencimento</th><th>Valor</th></tr>
+        </thead>
+        <tbody>
+          {% for account in pending_accounts %}
+          <tr>
+            <td>{{ account.title }}</td>
+            <td>{{ account.due_date }}</td>
+            <td>R$ {{ '%.2f'|format(account.amount) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Sem contas pendentes.</p>
+    {% endif %}
+  </article>
+</section>
+
+<section class="card">
+  <h3>Últimas movimentações</h3>
+  {% if recent_transactions %}
+    <table>
+      <thead>
+        <tr><th>Data</th><th>Tipo</th><th>Motivo</th><th>Descrição</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        {% for row in recent_transactions %}
+        <tr>
+          <td>{{ row.date }}</td>
+          <td>{{ row.type }}</td>
+          <td>{{ row.reason or '-' }}</td>
+          <td>{{ row.description or '-' }}</td>
+          <td class="{{ 'positive' if row.type == 'entrada' else 'negative' }}">R$ {{ '%.2f'|format(row.amount) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Nenhuma movimentação cadastrada.</p>
+  {% endif %}
+</section>
+{% endblock %}
