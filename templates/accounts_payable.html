@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Contas a Pagar | Controle de Caixa{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Adicionar conta a pagar</h2>
+  <form method="post" class="form-grid form-4">
+    <label>Título da conta
+      <input type="text" name="title" required>
+    </label>
+    <label>Motivo/Categoria
+      <input type="text" name="reason" placeholder="Ex: Energia elétrica">
+    </label>
+    <label>Valor (R$)
+      <input type="number" name="amount" min="0.01" step="0.01" required>
+    </label>
+    <label>Vencimento
+      <input type="date" name="due_date" required>
+    </label>
+    <button type="submit">Salvar conta</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Lista de contas</h2>
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Título</th><th>Motivo</th><th>Vencimento</th><th>Valor</th><th>Status</th><th>Ação</th></tr>
+    </thead>
+    <tbody>
+      {% for row in records %}
+      <tr>
+        <td>{{ row.title }}</td>
+        <td>{{ row.reason or '-' }}</td>
+        <td>{{ row.due_date }}</td>
+        <td>R$ {{ '%.2f'|format(row.amount) }}</td>
+        <td>{{ row.status }}</td>
+        <td>
+          <form method="post" action="{{ url_for('toggle_account_status', account_id=row.id) }}">
+            <button type="submit">Marcar como {{ 'pendente' if row.status == 'pago' else 'pago' }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>Nenhuma conta cadastrada.</p>
+  {% endif %}
+</section>
+{% endblock %}

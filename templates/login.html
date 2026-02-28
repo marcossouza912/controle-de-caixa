@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Login | Controle de Caixa{% endblock %}
+
+{% block content %}
+<section class="card login-card">
+  <h2>Acesso ao sistema</h2>
+  <p>Entre com usuário e senha para acessar o controle de caixa.</p>
+  <form method="post" class="form-grid">
+    <label>Usuário
+      <input type="text" name="username" required>
+    </label>
+
+    <label>Senha
+      <input type="password" name="password" required>
+    </label>
+
+    <button type="submit">Entrar</button>
+  </form>
+  <small>Usuário padrão: <strong>admin</strong> | Senha padrão: <strong>admin123</strong> (altere pelas variáveis de ambiente).</small>
+</section>
+{% endblock %}
